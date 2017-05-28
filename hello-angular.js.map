@@ -1,0 +1,1 @@
+{"version":3,"file":"hello-angular.js","sourceRoot":"","sources":["hello-angular.ts"],"names":[],"mappings":";;;;;;;;;;;AACA,sCAA0C;AAO1C,IAAM,qBAAqB;IAGvB;QACI,IAAI,CAAC,QAAQ,GAAG,kBAAkB,CAAC;IACvC,CAAC;IACL,4BAAC;AAAD,CAAC,AAND,IAMC;AANK,qBAAqB;IAJ1B,gBAAS,CAAC;QACP,QAAQ,EAAE,eAAe;QACzB,QAAQ,EAAE,yBAAyB;KACtC,CAAC;;GACI,qBAAqB,CAM1B"}
