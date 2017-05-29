@@ -1,66 +1,48 @@
-import { Component, NgModule } from '@angular/core';
+import { Component, NgModule, Input, Output, ViewEncapsulation, EventEmitter } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
-// Pomodoro timer component
+// Countdodwn child component
 @Component({
-    selector: 'pomodoro-timer',
-    template: `
-    <div class="text-center">
-      <img src="./assets/img/pomodoro.png" alt="Pomodoro">
-      <h1> {{ minutes }}:{{ seconds | number: '2.0' }} </h1>
-      <p>
-        <button (click)="togglePause()"
-          class="btn btn-danger">
-          {{ buttonLabel }}
-        </button>
-      </p>
-    </div>
-`
+    selector: 'countdown',
+    template: '<h1>Time left: {{seconds}}</h1>',
+    styles: ['h1 { color: #900 }'],
+    encapsulation: ViewEncapsulation.Emulated
 })
-export class PomodoroTimerComponent {
-    minutes: number;
-    seconds: number;
-    isPaused: boolean;
-    buttonLabel: string;
+class CountdownComponent {
+    @Input() seconds: number;
+    intervalId: NodeJS.Timer;
+    @Output() complete: EventEmitter<any> = new EventEmitter();
+    @Output() progress: EventEmitter<number> = new EventEmitter();
 
     constructor() {
-        this.resetPomodoro();
-        setInterval(() => this.tick(), 1000);
-    }
-
-    resetPomodoro(): void {
-        this.isPaused = true;
-        this.minutes = 24;
-        this.seconds = 59;
-        this.buttonLabel = 'Start';
+        this.intervalId = setInterval(() => this.tick(), 1000);
     }
 
     private tick(): void {
-        if (!this.isPaused) {
-            this.buttonLabel = 'Pause';
-
-            if (--this.seconds < 0) {
-                this.seconds = 59;
-                if (--this.minutes < 0) {
-                    this.resetPomodoro();
-                }
-            }
+        if (--this.seconds < 1) {
+            clearTimeout(this.intervalId);
+            this.complete.emit(null);
         }
+        this.progress.emit(this.seconds);
     }
+}
 
-    togglePause(): void {
-        this.isPaused = !this.isPaused;
-        if (this.minutes < 24 || this.seconds < 59) {
-            this.buttonLabel = this.isPaused ? 'Resume' : 'Pause';
-        }
+// Pomodoro timer component with external template
+@Component({
+    selector: 'pomodoro-timer',
+    templateUrl: '/app/pomodoro-timer.html'
+})
+class PomodoroTimerComponent {
+    onCountdownCompleted(): void {
+        alert('Time up!');
     }
 }
 
 // Main module, bootstrapping PomodoroTimerComponent as root component
 @NgModule({
     imports: [BrowserModule],
-    declarations: [PomodoroTimerComponent],
+    declarations: [PomodoroTimerComponent, CountdownComponent],
     bootstrap: [PomodoroTimerComponent],
 })
 export class AppModule { }
